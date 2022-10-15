@@ -19,6 +19,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -30,13 +31,12 @@ import com.example.cupcake.model.OrderViewModel
  */
 class FlavorFragment : Fragment() {
 
+    private val sharedViewModel: OrderViewModel by activityViewModels()
+
     // Binding object instance corresponding to the fragment_flavor.xml layout
     // This property is non-null between the onCreateView() and onDestroyView() lifecycle callbacks,
     // when the view hierarchy is attached to the fragment.
     private var binding: FragmentFlavorBinding? = null
-
-    // Use the 'by activityViewModels()' Kotlin property delegate from the fragment-ktx artifact
-    private val sharedViewModel: OrderViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,14 +51,11 @@ class FlavorFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding?.apply {
-            // Specify the fragment as the lifecycle owner
             lifecycleOwner = viewLifecycleOwner
-
-            // Assign the view model to a property in the binding class
+            flavorFragment = this@FlavorFragment
+         //   nextButton.setOnClickListener { goToNextScreen() }
             viewModel = sharedViewModel
 
-            // Assign the fragment
-            flavorFragment = this@FlavorFragment
         }
     }
 
@@ -70,17 +67,6 @@ class FlavorFragment : Fragment() {
     }
 
     /**
-     * Cancel the order and start over.
-     */
-    fun cancelOrder() {
-        // Reset order in view model
-        sharedViewModel.resetOrder()
-
-        // Navigate back to the [StartFragment] to start over
-        findNavController().navigate(R.id.action_flavorFragment_to_startFragment)
-    }
-
-    /**
      * This fragment lifecycle method is called when the view hierarchy associated with the fragment
      * is being removed. As a result, clear out the binding object.
      */
@@ -88,4 +74,10 @@ class FlavorFragment : Fragment() {
         super.onDestroyView()
         binding = null
     }
+
+    fun cancelOrder() {
+        sharedViewModel.resetOrder()
+        findNavController().navigate(R.id.action_flavorFragment_to_startFragment)
+    }
+
 }
